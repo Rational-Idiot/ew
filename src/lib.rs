@@ -5,6 +5,7 @@ use crate::{
 
 pub mod ast;
 pub mod interpreter;
+pub mod jit;
 pub mod parser;
 
 extern crate pest;

@@ -478,12 +478,12 @@ impl Interpreter {
             }
 
             (BinaryOp::Add, Val::Str(a), Val::Str(b)) => Ok(Val::Str(a.clone() + b)),
-            (BinaryOp::Mul, Val::Str(a), Val::Int(i)) => {
-                let mut res = *a;
-                for _ in 0..*i {
-                    res = res + a;
-                }
-                Ok(Val::Str(res.to_string()))
+            (BinaryOp::Mul, Val::Str(a), Val::Int(i)) => Ok(Val::Str(a.repeat(*i as usize))),
+
+            (BinaryOp::Add, Val::Array(a), Val::Array(i)) => {
+                let mut res = a.clone();
+                res.extend(i.clone());
+                Ok(Val::Array(res))
             }
 
             (BinaryOp::Eq, Val::Int(a), Val::Int(b)) => Ok(Val::Bool(a == b)),
@@ -565,8 +565,15 @@ impl Interpreter {
 
         map.insert("print", |args: Vec<Val>| -> Result<Val, String> {
             for v in args {
-                println!("{}", v);
+                print!("{}", v);
                 io::stdout().flush().unwrap();
+            }
+            Ok(Val::Unit)
+        });
+
+        map.insert("println", |args: Vec<Val>| -> Result<Val, String> {
+            for v in args {
+                println!("{}", v);
             }
             Ok(Val::Unit)
         });

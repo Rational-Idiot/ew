@@ -1,0 +1,111 @@
+fn render_donut(A, B) {
+    let width = 60
+    let height = 20
+    let size = width * height
+    
+    let output = []
+    let zbuffer = []
+    let i = 0
+    while (i < size) {
+        output = output + [" "]
+        zbuffer = zbuffer + [0.0]
+        i = i + 1
+    }
+    
+    let theta = 0.0
+    let phi = 0.0
+    let sinPhi = 0.0
+    let cosPhi = 0.0
+    let sinTheta = 0.0
+    let cosTheta = 0.0
+    let sinA = 0.0
+    let cosA = 0.0
+    let sinB = 0.0
+    let cosB = 0.0
+    let h = 0.0
+    let D = 0.0
+    let t = 0.0
+    let x = 0
+    let y = 0
+    let idx = 0
+    let N = 0
+    let chars = ".,-~:;=!*#$@"
+    let line = ""
+    
+    while (theta < 6.28) {
+        phi = 0.0
+        while (phi < 6.28) {
+            sinPhi = sin(phi)
+            cosPhi = cos(phi)
+            sinTheta = sin(theta)
+            cosTheta = cos(theta)
+            sinA = sin(A)
+            cosA = cos(A)
+            sinB = sin(B)
+            cosB = cos(B)
+            
+            h = cosTheta + 2.0
+            D = 1.0 / (sinPhi * h * sinA + sinTheta * cosA + 5.0)
+            t = sinPhi * h * cosA - sinTheta * sinA
+            
+            x = floor(30.0 + 20.0 * D * (cosPhi * h * cosB - t * sinB))
+            y = floor(10.0 + 10.0 * D * (cosPhi * h * sinB + t * cosB))
+            idx = x + width * y
+            
+            N = floor(8.0 * ((sinTheta * sinA - sinPhi * cosTheta * cosA) * cosB - sinPhi * cosTheta * sinA - sinTheta * cosA - cosPhi * cosTheta * sinB))
+            
+            if (y >= 0) {
+                if (y < height) {
+                    if (x >= 0) {
+                        if (x < width) {
+                            if (D > zbuffer[idx]) {
+                                zbuffer[idx] = D
+                                if (N > 0) {
+                                    if (N < 12) {
+                                        output[idx] = chars[N]
+                                    }
+                                }
+                                if (N <= 0) {
+                                    output[idx] = chars[0]
+                                }
+                                if (N >= 12) {
+                                    output[idx] = chars[11]
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            phi = phi + 0.05
+        }
+        theta = theta + 0.15
+    }
+    
+    y = 0
+    while (y < height) {
+        line = ""
+        x = 0
+        while (x < width) {
+            line = line + output[x + width * y]
+            x = x + 1
+        }
+        print(line)
+        print("
+")
+        y = y + 1
+    }
+}
+
+let A = 0.0
+let B = 0.0
+let frame = 0
+
+while (frame < 100) {
+    clear()
+    render_donut(A, B)
+    A = A + 0.07
+    B = B + 0.04
+    sleep(100)
+    frame = frame + 1
+}

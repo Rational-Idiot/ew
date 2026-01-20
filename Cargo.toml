@@ -4,6 +4,8 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+clap = "4.5.54"
+inkwell = "0.8.0"
 pest = "2.8.5"
 pest_derive = "2.8.5"
 rustyline = "17.0.2"

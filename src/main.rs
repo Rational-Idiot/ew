@@ -1,6 +1,6 @@
 use std::{env::args, fs};
 
-use lmao::{
+use ew::{
     interpreter::{Interpreter, Val},
     parser::parse,
 };
@@ -26,8 +26,8 @@ fn run(file: &str) {
         }
     };
 
-    match lmao::run(&source) {
-        Ok(val) => println!("{val}"),
+    match ew::run(&source) {
+        Ok(_) => println!(),
         Err(e) => {
             eprintln!("Error: {}", e);
             std::process::exit(1);
