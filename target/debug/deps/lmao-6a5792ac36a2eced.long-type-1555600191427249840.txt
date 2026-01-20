@@ -1,1 +1,0 @@
-HashMap<&'static str, fn(Vec<interpreter::Val>) -> Result<interpreter::Val, std::string::String>>
