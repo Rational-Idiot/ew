@@ -1,0 +1,1 @@
+HashMap<&'static str, Box<(dyn Fn(Vec<interpreter::Val>) -> Result<interpreter::Val, std::string::String> + 'static)>>

@@ -1,0 +1,50 @@
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+COMMENT = _{ "//" ~ (!NEWLINE ~ ANY)* }
+
+Program = _{ SOI ~ Stmt* ~ EOI }
+Int = @{ASCII_DIGIT+}
+Float = @{ ASCII_DIGIT+ ~ "." ~ ASCII_DIGIT+}
+Bool = @{ "true" | "false" }
+String = @{ "\"" ~ (!"\"" ~ ANY)* ~ "\"" }
+Array = { "[" ~ (Expr ~ ("," ~ Expr)*)? ~ "]" }
+ArrayAccess = { Ident ~ ("[" ~ Expr ~ "]")+ }
+Ident = @{ !KEYWORD ~ (ASCII_ALPHA | "_") ~ (ASCII_ALPHANUMERIC | "_") * }
+
+Comp = {Additive ~ (CompOp ~ Additive)* }
+Additive = { Multiplicative ~ (AddOp ~ Multiplicative)* }
+Multiplicative = { Unary ~ (MulOp ~ Unary)* }
+
+CompOp = { "<=" | ">=" | "<" | ">" | "==" | "!=" | "&&" | "||" }
+AddOp = { "+" | "-" }
+MulOp = { "*" | "/" | "%" }
+Unary = {UnaryOp ~ Unary | Call}
+UnaryOp = { "-" | "!" }
+
+Call = {Primary ~ CallArgs* }
+CallArgs = { "(" ~ Args? ~ ")" }
+Args = _{ Expr ~ ("," ~ Expr)* }
+
+Primary = _{ ArrayAccess | Literal | Ident | "(" ~ Expr ~ ")" }
+Literal = { Bool | Float | Int |  String | Array }
+Expr = {Conditional | WhileLoop | ForLoop | Comp }
+
+Conditional = {"if" ~ "(" ~ Expr ~ ")" ~ Block ~ ("else" ~ Block)?}
+Block = { "{" ~ Stmt* ~ "}"}
+
+Stmt = { Function | SimpleStmt | Expr }
+SimpleStmt = _{ Return | Assignment | Reassignment}
+
+Function = { "fn" ~ Ident ~ "(" ~ Params? ~ ")" ~ Block }
+Params = _{ Ident ~ ("," ~ Ident)* }
+
+Assignment = { "let" ~ Ident ~ "=" ~ Expr }
+Reassignment= { (ArrayAccess | Ident) ~ "=" ~ Expr }
+Return = { "return" ~ Expr }
+
+WhileLoop = { "while" ~ "(" ~ Expr ~ ")"  ~ Block }
+ForLoop = {"for" ~ Ident ~ "in" ~ Range ~ Block }
+Range = {Expr ~ ( ".." | "..=" ) ~ Expr}
+
+KEYWORD = @{ 
+    "return" | "false" | "true" | "while" | "else" | "for" | "let" | "fn" | "if" | "in"
+}
