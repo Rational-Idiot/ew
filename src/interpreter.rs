@@ -1,13 +1,9 @@
 use std::{
     collections::HashMap,
-    fmt::format,
     io::{self, Write},
 };
 
-use crate::{
-    ast::{AssignmentTarget, BinaryOp, Expr, Stmt, UnaryOp},
-    parser::Rule,
-};
+use crate::ast::{AssignmentTarget, BinaryOp, Expr, Stmt, UnaryOp};
 
 #[derive(Debug, Clone, PartialEq)]
 pub enum Val {
@@ -563,21 +559,24 @@ impl Interpreter {
     fn builtins() -> HashMap<&'static str, fn(Vec<Val>) -> Result<Val, String>> {
         let mut map: HashMap<&'static str, fn(Vec<Val>) -> Result<Val, String>> = HashMap::new();
 
-        map.insert("print", |args: Vec<Val>| -> Result<Val, String> {
-            for v in args {
+        map.insert("print", |args| {
+            for v in &args {
                 print!("{}", v);
-                io::stdout().flush().unwrap();
             }
+            io::stdout().flush().unwrap();
             Ok(Val::Unit)
         });
 
-        map.insert("println", |args: Vec<Val>| -> Result<Val, String> {
-            for v in args {
-                println!("{}", v);
+        map.insert("println", |args| {
+            for (i, v) in args.iter().enumerate() {
+                if i > 0 {
+                    print!(" ");
+                }
+                print!("{}", v);
             }
+            println!();
             Ok(Val::Unit)
         });
-
         map.insert("sin", |args: Vec<Val>| -> Result<Val, String> {
             if args.len() != 1 {
                 return Err(format!("sin() takes 1 argument, got {}", args.len()));

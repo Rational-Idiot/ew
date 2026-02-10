@@ -1,0 +1,132 @@
+fn create_grid(width, height) {
+    let grid = []
+    let i = 0
+    while (i < width * height) {
+        grid = grid + [0]
+        i = i + 1
+    }
+    return grid
+}
+
+fn set_cell(grid, width, x, y, value) {
+    grid[y * width + x] = value
+}
+
+fn get_cell(grid, width, height, x, y) {
+    if (x < 0) { return 0 }
+    if (y < 0) { return 0 }
+    if (x >= width) { return 0 }
+    if (y >= height) { return 0 }
+    return grid[y * width + x]
+}
+
+fn count_neighbors(grid, width, height, x, y) {
+    let count = 0
+    count = count + get_cell(grid, width, height, x - 1, y - 1)
+    count = count + get_cell(grid, width, height, x, y - 1)
+    count = count + get_cell(grid, width, height, x + 1, y - 1)
+    count = count + get_cell(grid, width, height, x - 1, y)
+    count = count + get_cell(grid, width, height, x + 1, y)
+    count = count + get_cell(grid, width, height, x - 1, y + 1)
+    count = count + get_cell(grid, width, height, x, y + 1)
+    count = count + get_cell(grid, width, height, x + 1, y + 1)
+    return count
+}
+
+fn update_grid(grid, width, height) {
+    let new_grid = create_grid(width, height)
+    let y = 0
+    let x = 0
+    let neighbors = 0
+    let cell = 0
+    
+    while (y < height) {
+        x = 0
+        while (x < width) {
+            cell = get_cell(grid, width, height, x, y)
+            neighbors = count_neighbors(grid, width, height, x, y)
+            
+            if (cell == 1) {
+                if (neighbors == 2) {
+                    set_cell(new_grid, width, x, y, 1)
+                }
+                if (neighbors == 3) {
+                    set_cell(new_grid, width, x, y, 1)
+                }
+            }
+            
+            if (cell == 0) {
+                if (neighbors == 3) {
+                    set_cell(new_grid, width, x, y, 1)
+                }
+            }
+            
+            x = x + 1
+        }
+        y = y + 1
+    }
+    
+    return new_grid
+}
+
+fn render_grid(grid, width, height) {
+    let y = 0
+    let x = 0
+    let line = ""
+    
+    while (y < height) {
+        line = ""
+        x = 0
+        while (x < width) {
+            if (grid[y * width + x] == 1) {
+                line = line + "█"
+            }
+            if (grid[y * width + x] == 0) {
+                line = line + " "
+            }
+            x = x + 1
+        }
+        print(line)
+        print("
+")
+        y = y + 1
+    }
+}
+
+let width = 60
+let height = 30
+let grid = create_grid(width, height)
+
+set_cell(grid, width, 30, 15, 1)
+set_cell(grid, width, 31, 15, 1)
+set_cell(grid, width, 32, 15, 1)
+set_cell(grid, width, 32, 14, 1)
+set_cell(grid, width, 31, 13, 1)
+
+set_cell(grid, width, 20, 10, 1)
+set_cell(grid, width, 21, 10, 1)
+set_cell(grid, width, 22, 10, 1)
+
+set_cell(grid, width, 25, 20, 1)
+set_cell(grid, width, 26, 20, 1)
+set_cell(grid, width, 25, 21, 1)
+set_cell(grid, width, 26, 21, 1)
+
+set_cell(grid, width, 35, 18, 1)
+set_cell(grid, width, 36, 18, 1)
+set_cell(grid, width, 37, 18, 1)
+set_cell(grid, width, 36, 17, 1)
+set_cell(grid, width, 36, 19, 1)
+
+let generation = 0
+while (generation < 200) {
+    clear()
+    print("Generation: ")
+    print(generation)
+    print("
+")
+    render_grid(grid, width, height)
+    grid = update_grid(grid, width, height)
+    sleep(100)
+    generation = generation + 1
+}
